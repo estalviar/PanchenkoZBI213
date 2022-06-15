@@ -1,22 +1,26 @@
+import json
+from functools import reduce
+from statistics import mean
+
+
 """task1"""
 def fact(x):
-  if x == 1:
+  if x == 0:
     return x
   else:
-    return x * fact(x - 1) #Вызываем ту же функцию
+    return x * fact(x - 1) 
 
-print(fact(4))
+
 """task2"""
 def filter_even(li):
 	 return list(filter((lambda x: x % 2 == 0), li))
 
-x = filter_even([12,14,18,19,21,7])
-print(x)
+
 """task3"""
 def square(li):
   return list(map(lambda x: x**2, li)) 
 
-print(square([1,2,3,4,5]))
+
 """task4"""
 def bin_search(li, element):
     mid = 0
@@ -37,7 +41,7 @@ def bin_search(li, element):
             start = mid + 1
     return -1
 
-print(bin_search([2,5,7,9,11,17,222],11))
+
 """task5"""
 def is_palindrome(string):
     
@@ -50,59 +54,39 @@ def is_palindrome(string):
         j -= 1
     return "YES"
 
-print(is_palindrome("Madam, I'm Adam"))
-print(is_palindrome("А роза упала на лапу Азора"))
+
 """task6"""
 def calculate(path2file):
-    result = ""
+    operations = {
+        '+': lambda x, y: x + y,
+        '-': lambda x, y: x - y,
+        '*': lambda x, y: x * y,
+        '//': lambda x, y: x // y,
+        '%': lambda x, y: x % y,
+        '**': lambda x, y: pow(x, y),
+    }
     with open(path2file) as f:
-        
-        contents = f.readlines()
-        for expression in contents:
-            ls = expression.split()
-            
-            if ls[0] == "+":
-                result += f'{int(ls[1]) + int(ls[2])},'
-            if ls[0] == '-':
-                result += f'{int(ls[1]) - int(ls[2])},'
-            if ls[0] == '*':
-                result += f'{int(ls[1]) * int(ls[2])},'
-            if ls[0] == '//':
-                result += f'{int(ls[1]) // int(ls[2])},'
-            if ls[0] == '%':
-                result += f'{int(ls[1]) % int(ls[2])},'
-            if ls[0] == '**':
-                result += f'{int(ls[1]) ** int(ls[2])},'
-               
-    return result[:-1]
+        lines = f.readlines()
+        results = []
+        for i in range(len(lines)):
+            line_content = lines[i].split()
+            results.append(operations[line_content[0]](int(line_content[1]), int(line_content[2])))
+        return reduce(lambda x, y: str(x) + ',' + str(y), results)
 
-name_file = input('Введите имя файла: ')
-print(calculate(name_file))
 """task7"""
 def substring_slice(path2file_1, path2file_2):
-    f1, f2 = open(path2file_1, "r"), open(path2file_2, "r") 
-    numbers = []
-    contents = f2.readlines() 
-    for expression in contents:
-        ls = expression.split() 
-        numbers.append((int(ls[0]), int(ls[1]))) 
+    with open(path2file_1) as f_1, open(path2file_2) as f_2:
+        lines = f_1.readlines()
+        intervals = f_2.readlines()
+        results = []
+        for i in range(len(lines)):
+            interval = intervals[i].split()
+            results.append(lines[i][int(interval[0]):int(interval[1]) + 1])
+        return " ".join(results)
 
-    result = []
-    for index, token in enumerate(f1.readlines()):
-        token = token[:-1] 
-        result.append(token[numbers[index][0]:numbers[index][1] + 1]) 
-    f3 = open("out.txt", "w")
-    
-    for elem in result:
-        f3.write(elem + ' ')
-    f1.close()
-    f2.close()
-    f3.close()
-    return result
 
-print(substring_slice(input("Введите название первого файла(.txt): "), input("Введите название второго файла(.txt): ")))
+
 """task8"""
-import json
 def decode_ch(sting_of_elements):
    
     buf = ''
@@ -122,10 +106,8 @@ def decode_ch(sting_of_elements):
         result += elems[buf]
     return result
 
-
-
-print(decode_ch("NOTiFICaTiON"))
 """task9"""
+
 class Student:
     
     def __init__(self, name, surname, grade=None):
@@ -155,26 +137,9 @@ class Student:
     def __str__(self):
         return self.full_name
 
-
-st1 = Student("Vasya", "Sur1", [5,5,5,5,4])
-st2 = Student("Alex", "Sur2")
-print(st1.is_otlichnik())
-print(st1)
 """task10"""
-class MyError(Exception):
 
+class MyError(Exception):
     def __init__(self, msg):
         self.msg = msg
-
-
-"""функция пример"""
-def fact(n):
-    if n < 0:
-        raise MyError("Value less 0")
-    res = 1
-    while n != 0:
-        res *= n
-        n -= 1
-    return res
-
-print(fact(-1))
+        super().__init__(self.msg)
